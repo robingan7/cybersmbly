@@ -4,8 +4,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import frc.cybersmbly.lib.SM_Electronics.*;
+import frc.cybersmbly.until.functions.MotorFunction;
 
 public class SM_Robot{
     private static ArrayList<Multi_Motor> motorsgroups;
@@ -15,6 +17,14 @@ public class SM_Robot{
     private static double speed;
     private static DifferentialDrive drive;
     public static SM_Robot Robot=new SM_Robot();
+    private static final HashMap<String, MotorFunction> motor_select;
+    private static MotorFunction tem_talon=new Single_Motor_Talon();
+    private static MotorFunction tem_victor=new Single_Motor_Victor();
+    static{
+        motor_select=new HashMap<>();
+        motor_select.put("talon",tem_talon);
+        motor_select.put("victor",tem_victor);
+    }
 
     private static class InvalidTypeException extends Exception {
         public InvalidTypeException(){
@@ -123,10 +133,7 @@ public class SM_Robot{
             if(motorsgroups.size()>0){
                 for(Multi_Motor ele: motorsgroups){
                     if(ele.getType().equalsIgnoreCase(name)){
-                        if(e.getString().equalsIgnoreCase("victor"))
-                            ele.addMotor(new Single_Motor_Victor(e.getString(),channelnumber));
-                        else
-                            ele.addMotor(new Single_Motor_Talon(e.getString(),channelnumber));    
+                        ele.addMotor(motor_select.get(e.getString()).make_motor(name, channelnumber));
                         count++;
                         break;
                     }
@@ -134,19 +141,13 @@ public class SM_Robot{
 
                 if(count==0){
                     Multi_Motor m1=new Multi_Motor(name);
-                    if(e.getString().equalsIgnoreCase("victor"))
-                         m1.addMotor(new Single_Motor_Victor(e.getString(),channelnumber));
-                    else
-                         m1.addMotor(new Single_Motor_Talon(e.getString(),channelnumber));    
+                    m1.addMotor(motor_select.get(e.getString()).make_motor(name, channelnumber));
                     motorsgroups.add(m1);
                 }
            
         }else{
             Multi_Motor m1=new Multi_Motor(name);
-            if(e.getString().equalsIgnoreCase("victor"))
-                m1.addMotor(new Single_Motor_Victor(e.getString(),channelnumber));
-            else
-                m1.addMotor(new Single_Motor_Talon(e.getString(),channelnumber));    
+            m1.addMotor(motor_select.get(e.getString()).make_motor(name, channelnumber));  
             motorsgroups.add(m1);
         }
         }

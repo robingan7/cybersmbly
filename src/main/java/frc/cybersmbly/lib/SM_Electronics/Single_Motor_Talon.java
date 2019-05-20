@@ -11,6 +11,14 @@ public class Single_Motor_Talon extends com.ctre.phoenix.motorcontrol.can.WPI_Ta
         motortype=type;
         this.channelnumber=channelnumber;
     }
+
+    public Single_Motor_Talon(){
+        super(-1);
+    }
+
+    public Single_Motor_Talon make_motor(String type, int channelnumber){
+        return new Single_Motor_Talon(type,channelnumber);
+    }
     public String getType(){
         return motortype;
     }

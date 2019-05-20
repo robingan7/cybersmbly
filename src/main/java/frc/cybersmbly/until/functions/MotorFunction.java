@@ -11,4 +11,5 @@ public interface MotorFunction extends SpeedController {
     void moveDistance(double d);
     void setInverted(boolean b);
     int getNumber();
+    MotorFunction make_motor(String name, int channelnumber);
 }

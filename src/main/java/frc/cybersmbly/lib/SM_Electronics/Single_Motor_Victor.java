@@ -11,6 +11,12 @@ public class Single_Motor_Victor extends com.ctre.phoenix.motorcontrol.can.WPI_V
         motortype=type;
         this.channelnumber=channelnumber;
     }
+    public Single_Motor_Victor(){
+        super(-1);
+    }
+    public Single_Motor_Victor make_motor(String type, int channelnumber){
+        return new Single_Motor_Victor(type, channelnumber);
+    }
     public String getType(){
         return motortype;
     }
