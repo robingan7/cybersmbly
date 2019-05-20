@@ -8,13 +8,13 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    SM_Robot.addStuff("right", Electronics.talon, 11);
-    SM_Robot.addStuff("right", Electronics.victor, 13);
-    SM_Robot.addStuff("right", Electronics.victor, 15);
+    SM_Robot.add("right", Electronics.talon, 11);
+    SM_Robot.add("right", Electronics.victor, 13);
+    SM_Robot.add("right", Electronics.victor, 15);
 
-    SM_Robot.addStuff("left", Electronics.talon, 12);
-    SM_Robot.addStuff("left", Electronics.victor, 14);
-    SM_Robot.addStuff("left", Electronics.victor, 16);
+    SM_Robot.add("left", Electronics.talon, 12);
+    SM_Robot.add("left", Electronics.victor, 14);
+    SM_Robot.add("left", Electronics.victor, 16);
     SM_Robot.setLeftAndRight("right", "left");
   }
   @Override

@@ -126,7 +126,7 @@ public class SM_Robot{
         speed=1;
     }
 
-    public static void addStuff(String name, final Electronics e, int channelnumber){
+    public static void add(String name, final Electronics e, int channelnumber){
         try{
         int count=0;
         if(e.getString().equalsIgnoreCase("talon") || e.getString().equalsIgnoreCase("victor")){
@@ -179,7 +179,7 @@ public class SM_Robot{
     }
     }
 
-    public static void addStuff(String name, final Electronics e, int channelnumber1,int channelnumber2){
+    public static void add(String name, final Electronics e, int channelnumber1,int channelnumber2){
         try{
         int count=0;
         if(e.getString().equalsIgnoreCase("doublesolenoid")){
