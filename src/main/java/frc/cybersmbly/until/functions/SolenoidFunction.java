@@ -5,6 +5,7 @@ package frc.cybersmbly.until.functions;
 *{@link Multi_Motor}
 */
 public interface SolenoidFunction{
+    String getType();
     void turnOn();
     void turnOff();
 }

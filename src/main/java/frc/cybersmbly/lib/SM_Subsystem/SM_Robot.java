@@ -288,7 +288,7 @@ public class SM_Robot{
         }
     }
 
-    public static void setLeftAndRight(String right, String left){
+    public static void setRightAndLeft(String right, String left){
         int righti,lefti;
         righti=0;
         lefti=0;
@@ -322,10 +322,10 @@ public class SM_Robot{
        // System.out.println(forward+" "+turn);
      }
 
-     public void changeDirection(final Directions e){
+     public static void changeDirection(final Directions e){
         direction=e.getVal();
      }
-     public void changeSpeed(double s){
+     public static void changeSpeed(double s){
          try{
             if(s>=0)
                 speed=s;
@@ -337,15 +337,39 @@ public class SM_Robot{
          }
      }
 
-     public void changeSpeed(JoyStick j, Button b,double s){
+     public static void changeSpeed(JoyStick j, Button b,double s){
         if(j.getJoy().getRawButton(b.getVal())){
             changeSpeed(s);
         }
     }
-     public void changeDirection(JoyStick j, Button b, final Directions e){
+     public static void changeDirection(JoyStick j, Button b, final Directions e){
          if(j.getJoy().getRawButton(b.getVal())){
             changeDirection(e);
          }
      }
+
+     public static void activeSoldeniodByPress(String solendoid_name, JoyStick j, Button b){
+         for(Multi_Solenoid ele: solenoidsgroups){
+            if(ele.getType().equals(solendoid_name)){
+                if(j.getJoy().getRawButton(b.getVal())){
+                    ele.turnOn();
+                }
+            }
+         }
+     }
+
+     public static void activeSoldeniodByHeld(String solendoid_name, JoyStick j, Button b){
+        for(Multi_Solenoid ele: solenoidsgroups){
+           if(ele.getType().equals(solendoid_name)){
+               if(j.getJoy().getRawButton(b.getVal())){
+                   ele.turnOn();
+               }else{
+                   ele.turnOff();
+               }
+           }
+        }
+    }
+
+    
      
 }

@@ -15,7 +15,8 @@ public class Robot extends TimedRobot {
     SM_Robot.add("left", Electronics.talon, 12);
     SM_Robot.add("left", Electronics.victor, 14);
     SM_Robot.add("left", Electronics.victor, 16);
-    SM_Robot.setLeftAndRight("right", "left");
+    
+    SM_Robot.setRightAndLeft("right", "left");
   }
   @Override
   public void robotPeriodic() {}

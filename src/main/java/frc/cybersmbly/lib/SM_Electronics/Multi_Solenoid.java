@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 import frc.cybersmbly.until.functions.*;
 
-public class Multi_Solenoid{
+public class Multi_Solenoid implements SolenoidFunction{
 private final ArrayList<SolenoidFunction> m_solenoid;
 private static int instances;
 private String name;
@@ -32,5 +32,16 @@ public int numberOfSolenoid(){
 }
 public String getType(){
     return name;
+}
+public void turnOn(){
+    for(SolenoidFunction sol: m_solenoid){
+        sol.turnOn();
+    }
+}
+
+public void turnOff(){
+    for(SolenoidFunction sol: m_solenoid){
+        sol.turnOff();
+    }
 }
 }
