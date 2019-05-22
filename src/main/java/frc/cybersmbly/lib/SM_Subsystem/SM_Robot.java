@@ -13,17 +13,20 @@ public class SM_Robot{
     private static ArrayList<Multi_Motor> motorsgroups;
     private static ArrayList<Multi_Solenoid> solenoidsgroups;
     private static Joystick j1, j2;
-    private static int direction;
-    private static double speed;
     private static DifferentialDrive drive;
     public static SM_Robot Robot=new SM_Robot();
     private static final HashMap<String, MotorFunction> motor_select;
     private static MotorFunction tem_talon=new Single_Motor_Talon();
     private static MotorFunction tem_victor=new Single_Motor_Victor();
+
+    private static HashMap<String, MotorGroup_Feature> motor_feature;
+
     static{
         motor_select=new HashMap<>();
         motor_select.put("talon",tem_talon);
         motor_select.put("victor",tem_victor);
+
+        motor_feature=new HashMap<>();
     }
 
     private static class InvalidTypeException extends Exception {
@@ -122,8 +125,6 @@ public class SM_Robot{
         solenoidsgroups =new ArrayList<Multi_Solenoid>();
         j1=new Joystick(0);
         j2=new Joystick(1);
-        direction=Directions.kForward.getVal();
-        speed=1;
     }
 
     public static void add(String name, final Electronics e, int channelnumber){
@@ -143,12 +144,14 @@ public class SM_Robot{
                     Multi_Motor m1=new Multi_Motor(name);
                     m1.addMotor(motor_select.get(e.getString()).make_motor(name, channelnumber));
                     motorsgroups.add(m1);
+                    motor_feature.put(name, new MotorGroup_Feature());
                 }
            
         }else{
             Multi_Motor m1=new Multi_Motor(name);
             m1.addMotor(motor_select.get(e.getString()).make_motor(name, channelnumber));  
             motorsgroups.add(m1);
+            motor_feature.put(name, new MotorGroup_Feature());
         }
         }
         else if(e.getString().equalsIgnoreCase("solenoid")){
@@ -216,17 +219,29 @@ public class SM_Robot{
        }
     }
 
-    public void movePercent(String n, JoyStick j, int number){
-        for(int i=0; i<motorsgroups.size();i++){
-            if(motorsgroups.get(i).getType().equalsIgnoreCase(n)){
-                for(int i2=0;i2<motorsgroups.get(i).getMotorList().size();i2++){
-                    motorsgroups.get(i).getMotorList().get(i2).movePercentage(j.getJoy().getRawAxis(number)*direction*speed);
-                }
-                 break;
+    private static double applyDeadband(double value, double deadband) {
+        if (Math.abs(value) > deadband) {
+          if (value > 0.0) {
+            return (value - deadband) / (1.0 - deadband);
+          } else {
+            return (value + deadband) / (1.0 - deadband);
+          }
+        } else {
+          return 0.0;
+        }
+      }    
+
+    public static void movePercent(String n, JoyStick j, Axis a){
+        for(Multi_Motor ele: motorsgroups){
+            if(ele.getType().equals(n)){
+                ele.set(applyDeadband(a.getVal()*motor_feature.get(n).getDirection()*motor_feature.get(n).getSpeed(),motor_feature.get(n).getDeadband()));
+                System.out.println(j.getJoy().getRawAxis(a.getVal()));
+                break;
             }
         }
     }
 
+    /*
     public void movePercent(String n, double value){
         for(int i=0; i<motorsgroups.size();i++){
             if(motorsgroups.get(i).getType().equalsIgnoreCase(n)){
@@ -237,6 +252,7 @@ public class SM_Robot{
             }
         }
     }
+    */
 
     public void moveDistance(String n, double distance){
         for(int i=0; i<motorsgroups.size();i++){
@@ -254,7 +270,7 @@ public class SM_Robot{
             moveDistance(n,distance);
         }
     }
-    public void turnOn(String n){
+    public static void turnOn(String n){
         
         for(int i=0; i<solenoidsgroups.size();i++){
             if(solenoidsgroups.get(i).getType().equalsIgnoreCase(n)){
@@ -265,7 +281,7 @@ public class SM_Robot{
             }
         }
      }
-     public void turnOff(String n){
+     public static void turnOff(String n){
         
         for(int i=0; i<solenoidsgroups.size();i++){
             if(solenoidsgroups.get(i).getType().equalsIgnoreCase(n)){
@@ -305,10 +321,11 @@ public class SM_Robot{
                 break;
             }
         }
-
+        motor_feature.put("do_not_use_this_name_四川绵阳",new MotorGroup_Feature());    
         //System.out.println(motorsgroups.get(righti).numberOfMotors()+"\n"+motorsgroups.get(lefti).numberOfMotors());
         drive=new DifferentialDrive(motorsgroups.get(righti), motorsgroups.get(lefti));
     }
+    
      public static void arcadeDrive(JoyStick j, Axis a1,Axis a2){
        
         
@@ -316,19 +333,23 @@ public class SM_Robot{
        // forward=turn=0;
         forward=j.getJoy().getRawAxis(a1.getVal());
         turn=j.getJoy().getRawAxis(a2.getVal());
-        forward = forward * direction;
 
-        drive.arcadeDrive(-forward, turn);
+        MotorGroup_Feature fea= motor_feature.get("do_not_use_this_name_四川绵阳");
+
+        drive.arcadeDrive(applyDeadband(-forward*fea.getDirection()*fea.getSpeed(),fea.getDeadband()),applyDeadband( turn*fea.getSpeed(),fea.getDeadband()));
        // System.out.println(forward+" "+turn);
      }
 
-     public static void changeDirection(final Directions e){
-        direction=e.getVal();
+     public static void setDirection(String name, final Directions e){
+        motor_feature.get(name).setDirection(e.getVal());
      }
-     public static void changeSpeed(double s){
+     public static void setDeadband(String name,double val){
+        motor_feature.get(name).setDeadband(val);
+     }
+     public static void setSpeed(String name, double val){
          try{
-            if(s>=0)
-                speed=s;
+            if(val>=0d)
+                motor_feature.get(name).setSpeed(val);
             else
                 throw new InvalidValueException();    
          }
@@ -336,17 +357,15 @@ public class SM_Robot{
 
          }
      }
-
-     public static void changeSpeed(JoyStick j, Button b,double s){
-        if(j.getJoy().getRawButton(b.getVal())){
-            changeSpeed(s);
-        }
+    public static void configure_drivebase_deadband(double val){
+        setDeadband("do_not_use_this_name_四川绵阳", val);
     }
-     public static void changeDirection(JoyStick j, Button b, final Directions e){
-         if(j.getJoy().getRawButton(b.getVal())){
-            changeDirection(e);
-         }
-     }
+    public static void configure_drivebase_speed(double val){
+        setSpeed("do_not_use_this_name_四川绵阳", val);
+    }
+    public static void configure_drivebase_direction(final Directions e){
+        setDirection("do_not_use_this_name_四川绵阳", e);
+    }
 
      public static void activeSoldeniodByPress(String solendoid_name, JoyStick j, Button b){
          for(Multi_Solenoid ele: solenoidsgroups){

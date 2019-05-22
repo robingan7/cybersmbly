@@ -17,6 +17,11 @@ public class Robot extends TimedRobot {
     SM_Robot.add("left", Electronics.victor, 16);
     
     SM_Robot.setRightAndLeft("right", "left");
+
+    SM_Robot.add("arm",Electronics.talon,18);
+    SM_Robot.add("arm",Electronics.victor,19);
+
+
   }
   @Override
   public void robotPeriodic() {}
@@ -27,7 +32,8 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
   @Override
   public void autonomousPeriodic() {
-    SM_Robot.arcadeDrive(JoyStick.joystick1, Axis.axis1, Axis.axis4);
+    SM_Robot.arcadeDrive(JoyStick.joystick1, Axis.axis1, Axis.axis2);
+    SM_Robot.movePercent("arm", JoyStick.joystick2, Axis.axis1);
   }
   @Override
   public void teleopPeriodic() {}
