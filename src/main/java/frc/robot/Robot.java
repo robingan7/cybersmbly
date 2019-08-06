@@ -16,11 +16,16 @@ public class Robot extends TimedRobot {
     SM_Robot.add("left", Electronics.victor, 14);
     SM_Robot.add("left", Electronics.victor, 16);
     
-    SM_Robot.setRightAndLeft("right", "left");
+    SM_Robot.set_West_Coast_Drive("right", "left");
+
+    SM_Robot.configure_drivebase_deadband(0.3);
+    //SM_Robot.configure_drivebase_speed(0);
 
     SM_Robot.add("arm",Electronics.talon,18);
     SM_Robot.add("arm",Electronics.victor,19);
 
+    SM_Robot.setDeadband("arm", 0.15);
+    SM_Robot.setSpeed("arm", 0.5);
 
   }
   @Override
